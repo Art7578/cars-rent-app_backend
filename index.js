@@ -6,7 +6,7 @@ import { validationResult } from "express-validator";
 import { registerValidation } from './validations/auth.js';
 import User from './models/user.js';
 import bcrypt from 'bcrypt';
-import { userInfo } from 'os';
+import checkAuth from './utils/checkAuth.js';
 
 dotenv.config();
 const {DB_HOST, PORT} = process.env;
@@ -87,7 +87,7 @@ app.post('/auth/login', async (req, res) => {
         const token = jwt.sign({
                 _id: user._id,
             },
-            'secret123,',
+            'secret123',
             {
                 expiresIn: '30d'
             },
@@ -103,6 +103,29 @@ app.post('/auth/login', async (req, res) => {
         console.log(error);
         res.status(500).json({
             message: 'Failed to login',
+        });
+    }
+});
+
+app.get('/auth/me', checkAuth, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
+
+    if (!user) {
+        return res.status(404).json({
+            message: 'User not found'
+        })
+    }
+
+    const {passwordHash, ...userData} = user._doc;
+
+    res.json({
+        ...userData,
+    });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'No access',
         });
     }
 })
