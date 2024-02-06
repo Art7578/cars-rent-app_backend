@@ -1,10 +1,11 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { registerValidation } from './validations/auth.js';
+import { registerValidation, loginValidation, carsCatalogValidation } from './validations/validation.js';
 import checkAuth from './utils/checkAuth.js';
 
 import { register, login, getMe } from "./controllers/UserController.js";
+import {create} from './controllers/CarsCatalog.js';
 
 dotenv.config();
 const {DB_HOST, PORT} = process.env;
@@ -23,8 +24,10 @@ app.get('/', (req, res) => {
 });
 
 app.post('/auth/register', registerValidation, register);
-app.post('/auth/login', login);
-app.get('/auth/me', checkAuth, getMe)
+app.post('/auth/login', loginValidation, login);
+app.get('/auth/me', checkAuth, getMe);
+
+app.post('/catalog', carsCatalogValidation, create);
 
 app.listen(PORT, (err) => {
     if (err) {
