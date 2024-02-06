@@ -30,3 +30,16 @@ export const create = async (req, res) => {
         });
     }
 };
+
+export const getAll = async (req, res) => {
+    try {
+        const catalog = await Car.find();
+
+        res.json(catalog)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Failed to get cars catalog'
+        })
+    }
+}
