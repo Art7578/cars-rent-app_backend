@@ -33,13 +33,16 @@ export const create = async (req, res) => {
 
 export const getAll = async (req, res) => {
     try {
-        const catalog = await Car.find();
+        const { page = 1, itemsPerPage = 8 } = req.query;
+        const skip = (page - 1) * itemsPerPage;
 
-        res.json(catalog)
+        const catalog = await Car.find().skip(skip).limit(itemsPerPage);
+
+        res.json(catalog);
     } catch (error) {
-        console.log(error)
+        console.log(error);
         res.status(500).json({
             message: 'Failed to get cars catalog'
-        })
+        });
     }
-}
+};
