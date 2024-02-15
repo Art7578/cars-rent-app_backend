@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 
 import { registerValidation, loginValidation, carsCatalogValidation } from './validations/validation.js';
-import { register, login, getMe } from "./controllers/UserController.js";
+import { register, login } from "./controllers/UserController.js";
 import {create, getAll} from './controllers/CarsCatalog.js';
 
 dotenv.config();
