@@ -33,10 +33,34 @@ export const create = async (req, res) => {
 
 export const getAll = async (req, res) => {
     try {
-        const { page = 1, itemsPerPage = 8 } = req.query;
+        const { page = 1, itemsPerPage = 8, brand, priceFrom, priceTo, mileageFrom, mileageTo } = req.query;
         const skip = (page - 1) * itemsPerPage;
 
-        const catalog = await Car.find().skip(skip).limit(itemsPerPage);
+        let filter = {};
+        if (brand) {
+            filter.make = brand;
+        }
+        if (priceFrom || priceTo) {
+            filter.rentalPrice = {}; // Инициализируем объект фильтрации для цены
+            if (priceFrom) {
+                filter.rentalPrice.$gte = priceFrom;
+            }
+            if (priceTo) {
+                filter.rentalPrice.$lte = priceTo;
+            }
+        }
+        if (mileageFrom || mileageTo) {
+            filter.mileage = {}; // Инициализируем объект фильтрации для пробега
+            if (mileageFrom) {
+                filter.mileage.$gte = mileageFrom;
+            }
+            if (mileageTo) {
+                filter.mileage.$lte = mileageTo;
+            }
+        }
+        // Добавьте обработку других критериев поиска, если необходимо
+
+        const catalog = await Car.find(filter).skip(skip).limit(itemsPerPage);
 
         res.json(catalog);
     } catch (error) {
